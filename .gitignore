@@ -1,0 +1,7 @@
+**/.DS_Store
+**/__pycache__/
+**/migrations/
+venv/
+env/
+*.pem
+make_venv.sh
