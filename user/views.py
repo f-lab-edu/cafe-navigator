@@ -1,17 +1,32 @@
+from django.contrib.auth import login, logout, authenticate
+from django.db.utils import IntegrityError
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework import generics
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from django.contrib.auth import authenticate, login, logout
 from user.models import User
+from user.serializers import UserSerializer
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 @api_view(['POST'])
-def sign_up(request):
+def sign_up_view(request):
     username = request.data.get("username")
     password = request.data.get("password")
-    User.objects.create_user(username=username, password=password)
+    is_staff = request.data.get("is_staff")
+    User.objects.create_user(username=username, password=password, is_staff=is_staff)
     return Response(status=status.HTTP_200_OK)
 
 
