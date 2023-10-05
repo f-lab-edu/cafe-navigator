@@ -3,10 +3,9 @@ from django.db.utils import IntegrityError
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.request import Request
 from rest_framework.response import Response
-
 from user.models import User
 from user.serializers import UserSerializer
 

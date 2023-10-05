@@ -1,5 +1,9 @@
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 from user import views
+
+# router = SimpleRouter()
+# router.register(r'user', views.UserList, basename="snippet")
 
 urlpatterns = [
     path('user/', views.UserList.as_view()),
