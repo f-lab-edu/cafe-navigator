@@ -1,7 +1,13 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from utils.permissions import IsOwnerOrReadOnly, IsAdminUser
+from rest_framework import status, filters
+from rest_framework.generics import ListAPIView
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from utils.permissions import IsOwnerOrReadOnly, IsAdminOrReadOnly
 from utils.viewsets import ModelWithoutListViewSet
+
 from cafe.models import Cafe, Comment, Like
 from cafe.serializers import CafeSerializers, CommentSerializers, LikeSerializers
 
@@ -9,39 +15,58 @@ from cafe.serializers import CafeSerializers, CommentSerializers, LikeSerializer
 class CafeViewSet(ModelViewSet):
     queryset = Cafe.objects.all()
     serializer_class = CafeSerializers
+    permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(staff=self.request.user)
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-        else:
-            permission_classes = [IsAdminUser]
-        return [permission() for permission in permission_classes]
+
+class CafeSearchViewSet(ReadOnlyModelViewSet):
+    queryset = Cafe.objects.all()
+    serializer_class = CafeSerializers
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
 
 
-class CommentViewSet(ModelWithoutListViewSet):
+class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializers
     
+    def get_queryset(self):
+        return self.queryset.filter(cafe=self.kwargs.get("cafe_id"))
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(
+            user=self.request.user,
+            cafe=Cafe.objects.get(id=self.kwargs.get("cafe_id"))
+        )
     
     def get_permissions(self):
-        if self.request.method in ['GET', 'POST']:
-            permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-        elif self.request.method == 'PUT':
+        if self.request.method in ['GET', 'POST', 'OPTIONS']:
+            permission_classes = [IsAuthenticatedOrReadOnly]
+        elif self.request.method in ['PUT', 'PATCH']:
             permission_classes = [IsOwnerOrReadOnly]
         elif self.request.method == 'DELETE':
-            permission_classes = [IsAdminUser, IsOwnerOrReadOnly]
+            permission_classes = [IsAdminOrReadOnly, IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
 
 
 class LikeViewSet(ModelViewSet):
     queryset = Like.objects.all()
     serializer_class = LikeSerializers
-    permission_classes = [IsOwnerOrReadOnly]
+    
+    def get_queryset(self):
+        return self.queryset.filter(cafe=self.kwargs.get("cafe_id"))
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(
+            user=self.request.user,
+            cafe=Cafe.objects.get(id=self.kwargs.get("cafe_id"))
+        )
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsOwnerOrReadOnly]
+        return [permission() for permission in permission_classes]

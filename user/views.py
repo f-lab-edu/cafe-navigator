@@ -2,7 +2,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.db.utils import IntegrityError
 
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAdminUser
 from rest_framework import generics, viewsets
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -13,11 +14,13 @@ from user.serializers import UserSerializer
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
 
 
 class UserDetail(generics.RetrieveDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
 
 
 @api_view(['POST'])
