@@ -5,7 +5,10 @@ from cafe import views
 
 router = DefaultRouter()
 router.register("cafe", views.CafeViewSet)
-router.register("cafe/<int:pk>/comment", views.CommentViewSet)
+router.register("cafe/search", views.CafeSearchViewSet)
+router.register(r"cafe/(?P<cafe_id>\d+)/comment", views.CommentViewSet, basename='comment')
+router.register(r"cafe/(?P<cafe_id>\d+)/like", views.LikeViewSet)
+
 
 
 urlpatterns = [
