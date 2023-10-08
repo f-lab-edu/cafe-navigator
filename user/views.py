@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework import generics, viewsets
 from rest_framework.request import Request
 from rest_framework.response import Response
+
+from utils.permissions import IsOwnerOrReadOnly
 from user.models import User
 from user.serializers import UserSerializer
 
@@ -17,10 +19,10 @@ class UserList(generics.ListAPIView):
     permission_classes = [IsAdminUser]
 
 
-class UserDetail(generics.RetrieveDestroyAPIView):
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser, IsOwnerOrReadOnly]
 
 
 @api_view(['POST'])
