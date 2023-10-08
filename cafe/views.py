@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from rest_framework.exceptions import ValidationError
 from rest_framework import status, filters
 from rest_framework.generics import ListAPIView
@@ -21,15 +23,23 @@ class CafeViewSet(ModelViewSet):
         serializer.save(staff=self.request.user)
 
 
-class CafeSearchViewSet(ReadOnlyModelViewSet):
+class CafeSearchViewSet(ListAPIView):
     queryset = Cafe.objects.all()
     serializer_class = CafeSerializers
     filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
+    search_fields = ['name'] # 추가 컬럼들
 
     def get_queryset(self):
-        print(self.queryset)
-        return self.queryset.filter(name=self.kwargs.get("search"))
+        queryset = super().get_queryset()
+        search_query = self.request.query_params.get('q', None)
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query)
+                # | Q(other_columns__icontains=search_query)
+            )
+
+        return queryset
 
 
 class CommentViewSet(ModelViewSet):

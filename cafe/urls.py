@@ -5,12 +5,11 @@ from cafe import views
 
 router = DefaultRouter()
 router.register("cafe", views.CafeViewSet)
-router.register("cafe/search", views.CafeSearchViewSet)
-router.register(r"cafe/(?P<cafe_id>\d+)/comment", views.CommentViewSet, basename='comment')
+router.register(r"cafe/(?P<cafe_id>\d+)/comment", views.CommentViewSet)
 router.register(r"cafe/(?P<cafe_id>\d+)/like", views.LikeViewSet)
 
 
-
 urlpatterns = [
+    path("cafe/search", views.CafeSearchViewSet.as_view()),
     path("", include(router.urls)),
 ]
