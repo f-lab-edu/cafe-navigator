@@ -4,11 +4,12 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status, filters
 from rest_framework.generics import ListAPIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from geopy.geocoders import Nominatim
 
-from utils.permissions import IsOwnerOrReadOnly, IsAdminOrReadOnly
+from utils.permissions import IsOwner, IsAdminOrReadOnly
 
 from cafe.models import Cafe, Comment, Like
 from cafe.serializers import CafeSerializer, CommentSerializer, LikeSerializer
@@ -20,25 +21,52 @@ class CafeViewSet(ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(staff=self.request.user)
+        serializer.save(user=self.request.user)
+
+
+def geocoding(address):
+    geolocoder = Nominatim(user_agent='South Korea', timeout=None)
+    geo = geolocoder.geocode(address)
+    return geo.latitude, geo.longitude
 
 
 class CafeSearchViewSet(ListAPIView):
     queryset = Cafe.objects.all()
     serializer_class = CafeSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name'] # 추가 컬럼들
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        search_query = self.request.query_params.get('q', None)
+        name = self.request.query_params.get('name', None)
+        location = self.request.query_params.get('location', None)
+        lon = self.request.query_params.get('lon', None)
+        lat = self.request.query_params.get('lat', None)
+        capacity = self.request.query_params.get('capacity', None)
+        outlet = self.request.query_params.get('outlet', None)
+        floor = self.request.query_params.get('floor', None)
 
-        if search_query:
-            queryset = queryset.filter(
-                Q(name__icontains=search_query)
-                # | Q(other_columns__icontains=search_query)
+        cafe_condition = Q()
+
+        if name:
+            cafe_condition.add(Q(name__icontains=name), Q.AND)
+
+        if location:
+            lat, lon = geocoding(location)
+
+        if lat and lon:
+            cafe_condition.add(
+                Q(lon__range=(lat - 0.009, lat + 0.009), lat__range=(lon - 0.009, lon + 0.009)), Q.AND
             )
+        
+        if capacity:
+            cafe_condition.add(Q(capacity__gt=capacity), Q.AND)
 
+        if outlet:
+            cafe_condition.add(Q(outlet=outlet), Q.AND)
+        
+        if floor:
+            cafe_condition.add(Q(floor=floor), Q.AND)
+
+        queryset = Cafe.objects.filter(cafe_condition).distinct()
         return queryset
 
 
@@ -56,12 +84,12 @@ class CommentViewSet(ModelViewSet):
         )
     
     def get_permissions(self):
-        if self.request.method in ['GET', 'POST', 'OPTIONS']:
-            permission_classes = [IsAuthenticatedOrReadOnly]
-        elif self.request.method in ['PUT', 'PATCH']:
-            permission_classes = [IsOwnerOrReadOnly]
+        if self.request.method in ['PUT', 'PATCH']:
+            permission_classes = [IsOwner]
         elif self.request.method == 'DELETE':
-            permission_classes = [IsAdminOrReadOnly, IsOwnerOrReadOnly]
+            permission_classes = [IsAdminUser|IsOwner]
+        else:
+            permission_classes = [IsAuthenticatedOrReadOnly]
         return [permission() for permission in permission_classes]
 
 
@@ -88,5 +116,5 @@ class LikeViewSet(ModelViewSet):
         if self.request.method == 'POST':
             permission_classes = [IsAuthenticated]
         else:
-            permission_classes = [IsOwnerOrReadOnly]
+            permission_classes = [IsOwner]
         return [permission() for permission in permission_classes]
