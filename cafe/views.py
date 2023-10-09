@@ -11,12 +11,12 @@ from rest_framework.response import Response
 from utils.permissions import IsOwnerOrReadOnly, IsAdminOrReadOnly
 
 from cafe.models import Cafe, Comment, Like
-from cafe.serializers import CafeSerializers, CommentSerializers, LikeSerializers
+from cafe.serializers import CafeSerializer, CommentSerializer, LikeSerializer
 
 
 class CafeViewSet(ModelViewSet):
     queryset = Cafe.objects.all()
-    serializer_class = CafeSerializers
+    serializer_class = CafeSerializer
     permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):
@@ -25,7 +25,7 @@ class CafeViewSet(ModelViewSet):
 
 class CafeSearchViewSet(ListAPIView):
     queryset = Cafe.objects.all()
-    serializer_class = CafeSerializers
+    serializer_class = CafeSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name'] # 추가 컬럼들
 
@@ -44,7 +44,7 @@ class CafeSearchViewSet(ListAPIView):
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializers
+    serializer_class = CommentSerializer
     
     def get_queryset(self):
         return self.queryset.filter(cafe=self.kwargs.get("cafe_id"))
@@ -67,7 +67,7 @@ class CommentViewSet(ModelViewSet):
 
 class LikeViewSet(ModelViewSet):
     queryset = Like.objects.all()
-    serializer_class = LikeSerializers
+    serializer_class = LikeSerializer
     
     def get_queryset(self):
         return self.queryset.filter(cafe=self.kwargs.get("cafe_id"))
@@ -76,7 +76,7 @@ class LikeViewSet(ModelViewSet):
         user = self.request.user
         cafe = Cafe.objects.get(id=self.kwargs.get("cafe_id"))
 
-        if Like.objects.get(user=user, cafe=cafe):
+        if Like.objects.filter(user=user, cafe=cafe).exists():
             raise ValidationError(detail='이미 좋아요 누른 게시물입니다.')
 
         serializer.save(
