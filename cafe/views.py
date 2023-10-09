@@ -38,8 +38,8 @@ class CafeSearchViewSet(ListAPIView):
         queryset = super().get_queryset()
         name = self.request.query_params.get('name', None)
         location = self.request.query_params.get('location', None)
-        lon = self.request.query_params.get('lon', None)
-        lat = self.request.query_params.get('lat', None)
+        longitude = self.request.query_params.get('longitude', None)
+        latitude = self.request.query_params.get('latitude', None)
         capacity = self.request.query_params.get('capacity', None)
         outlet = self.request.query_params.get('outlet', None)
         floor = self.request.query_params.get('floor', None)
@@ -50,11 +50,11 @@ class CafeSearchViewSet(ListAPIView):
             cafe_condition.add(Q(name__icontains=name), Q.AND)
 
         if location:
-            lat, lon = geocoding(location)
+            latitude, longitude = geocoding(location)
 
-        if lat and lon:
+        if latitude and longitude:
             cafe_condition.add(
-                Q(lon__range=(lat - 0.009, lat + 0.009), lat__range=(lon - 0.009, lon + 0.009)), Q.AND
+                Q(latitude__range=(latitude - 0.009, latitude + 0.009), longitude__range=(longitude - 0.009, longitude + 0.009)), Q.AND
             )
         
         if capacity:
