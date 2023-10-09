@@ -19,7 +19,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
 
 class CafeSerializer(serializers.ModelSerializer):
-    staff  = serializers.ReadOnlyField(source='user.username')
+    user = serializers.ReadOnlyField(source='user.username')
     like_count = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     
