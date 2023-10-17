@@ -3,6 +3,7 @@
 **/migrations/
 venv/
 env/
+tmp/
 .env
 *.pem
 make_venv.sh
