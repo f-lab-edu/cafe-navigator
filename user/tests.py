@@ -16,7 +16,6 @@ class RegisterAPIViewTest(TestCase):
             {
                 "username": "teststaff1",
                 "password": "1234",
-                "is_staff": 1
             },
             content_type="application/json",
         )

@@ -10,12 +10,12 @@ from rest_framework.response import Response
 
 from utils.permissions import IsOwner
 from user.models import User
-from user.serializers import UserSerializer
+from user.serializers import UserSerializer, AdminUserSerializer
 
 
 class UserList(ListAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = AdminUserSerializer
     permission_classes = [IsAdminUser]
 
 
@@ -23,15 +23,19 @@ class UserDetail(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser|IsOwner]
+    
+    def get_serializer_class(self):
+        if self.request.user.is_staff:  
+            return AdminUserSerializer 
+        return UserSerializer
 
 
 @api_view(['POST'])
 def sign_up_view(request):
     username = request.data.get("username")
     password = request.data.get("password")
-    is_staff = request.data.get("is_staff")
-    User.objects.create_user(username=username, password=password, is_staff=is_staff)
-    return Response(status=status.HTTP_200_OK)
+    User.objects.create_user(username=username, password=password)
+    return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

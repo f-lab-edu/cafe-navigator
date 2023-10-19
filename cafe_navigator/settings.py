@@ -45,7 +45,7 @@ SECRET_KEY = get_env_variable('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', 'testserver']
 
 
 # Application definition
@@ -105,6 +105,9 @@ DATABASES = {
         'NAME': get_env_variable('DB_NAME'),
         'USER': get_env_variable('DB_USER'),
         'PASSWORD': get_env_variable('DB_PASSWORD'),
+        'TEST': {
+            'NAME': 'test_db',
+        },
     },
 }
 
