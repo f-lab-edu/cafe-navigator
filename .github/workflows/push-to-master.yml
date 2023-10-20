@@ -8,17 +8,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # services:
-    #   mysqldb:
-    #     image: mysql:latest
-    #     env:
-    #       MYSQL_USER: ${{ vars.DB_USER }}
-    #       MYSQL_PASSWORD: ${{ vars.DB_PASSWORD }}
-    #       MYSQL_DATABASE: ${{ vars.DB_NAME }}
-    #       MYSQL_ROOT_PASSWORD: ${{ vars.DB_PASSWORD }}
-    #     ports:
-    #       - 3306:3306 
-    #     options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+    services:
+      mysqldb:
+        image: mysql:latest
+        env:
+          MYSQL_USER: ${{ vars.DB_USER }}
+          MYSQL_PASSWORD: ${{ vars.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ vars.DB_NAME }}
+          MYSQL_ROOT_PASSWORD: ${{ vars.DB_PASSWORD }}
+        ports:
+          - 3306:3306 
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         
     steps:
     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
@@ -29,6 +29,11 @@ jobs:
         touch .env
         echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
         echo KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} >> .env
+        echo DB_NAME=${{ vars.DB_NAME }} >> .env
+        echo DB_HOST=${{ vars.DB_HOST }} >> .env
+        echo DB_PORT=${{ vars.DB_PORT }} >> .env
+        echo DB_PASSWORD=${{ vars.DB_PASSWORD }} >> .env
+        echo DB_USER=${{ vars.DB_USER }} >> .env
         cat .env
 
     - name: Set up Python 3.11
