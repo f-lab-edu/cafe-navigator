@@ -8,3 +8,4 @@ tmp/
 *.pem
 make_venv.sh
 .pytest_cache/
+.coverage
