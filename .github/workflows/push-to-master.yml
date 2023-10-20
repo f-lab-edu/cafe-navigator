@@ -7,21 +7,22 @@ on:
  
 jobs:
   build:
-    runs-on: ubuntu-16.04
-    services:
-     mysqldb:
-        image: mysql:latest
-        env:
-          MYSQL_USER: test
-          MYSQL_PASSWORD: test
-          MYSQL_DATABASE: test
-          MYSQL_ROOT_PASSWORD: test 
-        ports:
-          - 3306:3306 
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+    runs-on: ubuntu-latest
+    # services:
+    #   mysqldb:
+    #     image: mysql:latest
+    #     env:
+    #       MYSQL_USER: ${{DB_USER}}
+    #       MYSQL_PASSWORD: ${{DB_PASSWORD}}
+    #       MYSQL_DATABASE: ${{DB_NAME}}
+    #       MYSQL_ROOT_PASSWORD: ${{DB_PASSWORD}} 
+    #     ports:
+    #       - 3306:3306 
+    #     options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         
     steps:
-    - uses: actions/checkout@v2
+    - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+    - uses: actions/checkout@v4
  
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
