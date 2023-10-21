@@ -12,7 +12,7 @@ jobs:
       mysqldb:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ${{ vars.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_USER: ${{ vars.DB_USER }}
           MYSQL_PASSWORD: ${{ vars.DB_PASSWORD }}
           MYSQL_DATABASE: ${{ vars.DB_NAME }}
