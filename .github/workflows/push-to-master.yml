@@ -13,8 +13,6 @@ jobs:
         image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: 'navi'
-          MYSQL_USER: 'root'
-          MYSQL_PASSWORD: 'navi'
           MYSQL_DATABASE: 'test-dev'
         ports:
           - 3306:3306 
