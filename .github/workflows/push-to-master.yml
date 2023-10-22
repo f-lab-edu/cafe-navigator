@@ -12,7 +12,7 @@ jobs:
       mysqldb:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: "navi"
           MYSQL_USER: ${{ vars.DB_USER }}
           MYSQL_PASSWORD: ${{ vars.DB_PASSWORD }}
           MYSQL_DATABASE: ${{ vars.DB_NAME }}
@@ -35,6 +35,8 @@ jobs:
         echo DB_PASSWORD=${{ vars.DB_PASSWORD }} >> .env
         echo DB_USER=${{ vars.DB_USER }} >> .env
         cat .env
+
+    - run: echo "🎉 The job was automatically triggered by a ${{ vars.DB_NAME }} event."
 
     - name: Set up Python 3.11
       uses: actions/setup-python@v1
