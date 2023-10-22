@@ -7,10 +7,10 @@ on:
  
 jobs:
   build:
-    with:
-      config-path: .github/push-to-master.yml
-      
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name }}
+
     services:
       mysqldb:
         image: mysql:latest
