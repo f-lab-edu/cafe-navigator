@@ -11,7 +11,7 @@ on:
 
 jobs:
   call-workflow-passing-data:
-    uses: f-lab-edu/cafe-navigator/.github/workflows/push-to-master.yml@master
+    uses: f-lab-edu/cafe-navigator/.github/workflows/push-to-master.yml@main
     with:
       config-path: .github/test.yml
     secrets:
