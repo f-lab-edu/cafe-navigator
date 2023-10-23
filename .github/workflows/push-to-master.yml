@@ -2,8 +2,8 @@ name: Python application
 run-name: test 
 
 on:
-  push:
-    branches: [ main ]
+  push
+
 jobs:
   build:
     runs-on: ubuntu-latest
