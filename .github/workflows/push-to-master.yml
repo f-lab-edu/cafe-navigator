@@ -4,19 +4,7 @@ run-name: test
 on:
   push:
     branches: [ main ]
-  workflow_call:
-    secrets:
-      token:
-        required: true
-
 jobs:
-  call-workflow-passing-data:
-    uses: f-lab-edu/cafe-navigator/.github/workflows/push-to-master.yml@main
-    with:
-      config-path: .github/test.yml
-    secrets:
-      envPAT: ${{ secrets.token }}
-
   build:
     runs-on: ubuntu-latest
     environment: dev
@@ -41,11 +29,11 @@ jobs:
         touch .env
         echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
         echo KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} >> .env
-        echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-        echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-        echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-        echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
-        echo DB_USER=${{ secrets.DB_USER }} >> .env
+        echo DB_NAME=test_db >> .env
+        echo DB_HOST=127.0.0.1 >> .env
+        echo DB_PORT=3306 >> .env
+        echo DB_PASSWORD=navi >> .env
+        echo DB_USER=root >> .env
         cat .env
 
     - name: Set up Python 3.11
