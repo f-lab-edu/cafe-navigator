@@ -44,8 +44,10 @@ jobs:
     - name: Install dependencies
       run: |
         echo $PWD
+        ls -al
+        ls -al requirements/
         python -m pip install --upgrade pip
-        pip install -r ./requirements/requirements.test.txt
+        pip install -r requirements/requirements.test.txt
     - name: Start Pytest
       run: |
         pytest
