@@ -1,7 +1,0 @@
-SECRET_KEY="django-insecure-$0bkm5x%rpkrtu8r&zh1te%s9uu%wcfz7_%qh$*cx$#0j6%a(s"
-DB_HOST="127.0.0.1"
-DB_PORT=3306
-DB_NAME="test_db"
-DB_USER="root"
-DB_PASSWORD="navi"
-KAKAO_API_KEY="c7ef82d7c895c10231f1d696720963fa"
