@@ -20,10 +20,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: dev
-    steps:
-    - uses: actions/labeler@v4
-      with:
-        repo-token: ${{ secrets.SECRET_KEY }}
 
     services:
       mysqldb:
@@ -36,6 +32,10 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         
     steps:
+    - uses: actions/labeler@v4
+      with:
+        repo-token: ${{ secrets.SECRET_KEY }}
+
     - name: 'Create env file'
       run: |
         touch .env
@@ -47,8 +47,6 @@ jobs:
         echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
         echo DB_USER=${{ secrets.DB_USER }} >> .env
         cat .env
-
-    - run: echo "🎉 The job was automatically triggered by a ${{ secrets.DB_NAME }} event."
 
     - name: Set up Python 3.11
       uses: actions/setup-python@v1
