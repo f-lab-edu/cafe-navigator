@@ -13,8 +13,8 @@ jobs:
       mysqldb:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: 'navi'
-          MYSQL_DATABASE: 'test_db'
+          MYSQL_ROOT_PASSWORD: ${{secrets.DB_PASSWORD}}
+          MYSQL_DATABASE: ${{secrets.DB_NAME}}
         ports:
           - 3306:3306 
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
@@ -29,11 +29,11 @@ jobs:
         touch .env
         echo SECRET_KEY=${{secrets.SECRET_KEY}} >> .env
         echo KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} >> .env
-        echo DB_NAME=test_db >> .env
-        echo DB_HOST=127.0.0.1 >> .env
-        echo DB_PORT=3306 >> .env
-        echo DB_PASSWORD=navi >> .env
-        echo DB_USER=root >> .env
+        echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+        echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+        echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+        echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
+        echo DB_USER=${{ secrets.DB_USER }} >> .env
         cat .env
 
     - name: Set up Python 3.11
