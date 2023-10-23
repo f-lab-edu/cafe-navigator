@@ -6,11 +6,25 @@ on:
     branches: [ main ]
   workflow_call:
     secrets:
-      SECRET_KEY:
+      token:
         required: true
+
 jobs:
+  call-workflow-passing-data:
+    uses:f-lab-edu/cafe-navigator/.github/workflows/push-to-master.yml@master
+    with:
+      config-path: .github/test.yml
+    secrets:
+      envPAT: ${{ secrets.token }}
+
   build:
     runs-on: ubuntu-latest
+    environment: dev
+    steps:
+    - uses: actions/labeler@v4
+      with:
+        repo-token: ${{ secrets.SECRET_KEY }}
+
     services:
       mysqldb:
         image: mysql:latest
