@@ -2,8 +2,8 @@ name: Python application
 run-name: test 
 
 on:
-  push:
-    branches: [ main ]
+  push
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,9 +20,13 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         
     steps:
-    - uses: actions/labeler@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v1
       with:
-        repo-token: ${{ secrets.SECRET_KEY }}
+        python-version: 3.11
+
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: 'Create env file'
       run: |
@@ -35,17 +39,12 @@ jobs:
         echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
         echo DB_USER=${{ secrets.DB_USER }} >> .env
         cat .env
-
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.11
     
     - name: Install dependencies
       run: |
-        echo $PWD
         python -m pip install --upgrade pip
-        pip install -r ./requirements/requirements.test.txt
+        pip install -r requirements/requirements.test.txt
+
     - name: Start Pytest
       run: |
         pytest
