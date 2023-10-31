@@ -7,3 +7,4 @@ aiohttp==3.8.6
 pytest-django==4.5.2
 pytest-cov==4.1.0
 geopy
+pymysql==1.1.0
